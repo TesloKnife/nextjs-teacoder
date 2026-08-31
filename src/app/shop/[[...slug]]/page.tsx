@@ -5,7 +5,7 @@ interface ShopPageProps {
 export default async function ShopPage({ params }: ShopPageProps) {
   const { slug } = await params;
 
-  const currentSlug = slug || "";
+  const currentSlug = slug || [];
   const [category, brand, model] = currentSlug;
 
   return (
@@ -17,37 +17,46 @@ export default async function ShopPage({ params }: ShopPageProps) {
         </p>
       </header>
 
-        <nav>
-          <span>Shop</span>
+      <nav>
+        <span>Shop</span>
 
-          {currentSlug.map((segment, index) => (
-            <div key={index}>
-              <span>/</span>
-              <span>{segment}</span>
-            </div>
-          ))}
-        </nav>
-
-        <div>
-          <div>
-            <span>Category</span>
-            <p>{category}</p>
+        {currentSlug.map((segment, index) => (
+          <div key={index}>
+            <span>/</span>
+            <span>{segment}</span>
           </div>
-          {brand && (
+        ))}
+      </nav>
+
+      <div>
+        {!category && (
+          <div>
+            <h2>Добро пожаловать в магазин</h2>
+            <p>Выберите категорию выше, чтобы начать</p>
+          </div>
+        )}
+        {category && (
+          <div>
+            <p>Active Filter</p>
             <div>
-              <span>Brand</span>
-              <p>{brand}</p>
+              <p>
+                <strong>Category:</strong> {category}
+              </p>
+              {brand && (
+                <p>
+                  <strong>Brand:</strong> {brand}
+                </p>
+              )}
+              {model && (
+                <p>
+                  <strong>Model:</strong> {model}
+                </p>
+              )}
             </div>
-          )}
-          {model && (
-            <div>
-              <span>Model</span>
-              <p>{model.replace("-", "")}</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-      <p>[DEBUG] Raw segment array: {JSON.stringify(slug)}</p>
+      <div>DEBUG: slug_state = {JSON.stringify(currentSlug)}</div>
     </div>
   );
 }
