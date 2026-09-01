@@ -9,7 +9,7 @@ export default async function PhotoPage({ params }: PhotoPageProps) {
   const { id } = await params;
 
   const car = CARS.find((c) => c.id === id);
-  if (!car) return notFound;
+  if (!car) return notFound();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-white text-black">
