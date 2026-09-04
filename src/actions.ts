@@ -1,9 +1,7 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidateTag, updateTag } from "next/cache";
 
-export async function handlePurchaseNotif(id: string) {
-  // Максимальная актуальность данныъ
-  revalidateTag(`sneaker-${id}`, { expire: 0 });
-  revalidateTag(`sneakers-data`, { expire: 0 });
+export async function updateProductInfo() {
+  updateTag("all-products");
 }
