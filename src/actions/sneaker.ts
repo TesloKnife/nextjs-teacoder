@@ -1,5 +1,4 @@
-import { ParsedTypes } from "./../../node_modules/zod/src/v4/core/util";
-("use server");
+"use server";
 
 import { actionClient } from "@/lib/safe-action";
 import z from "zod";
@@ -39,7 +38,7 @@ export const createSneakerDrop = actionClient
 
       const data = await res.json();
 
-      return { success: true, data };
+      return { success: true, product: data };
     } catch (error: any) {
       throw new Error(error.message || "Не удалось создать товар");
     }
