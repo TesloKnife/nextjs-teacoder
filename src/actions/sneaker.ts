@@ -1,34 +1,46 @@
-"use server";
+import { ParsedTypes } from "./../../node_modules/zod/src/v4/core/util";
+("use server");
 
-interface NewSneakerInput {
-  title: string;
-  price: number;
-  stock: number;
-}
+import { actionClient } from "@/lib/safe-action";
+import z from "zod";
 
-export async function createSneakerDrop(payload: NewSneakerInput) {
-  console.log(`Payload: ${payload}`);
+const CreateSneakerSchema = z.object({
+  title: z
+    .string()
+    .min(3, { message: "Название должно быть не короче 3 символов" })
+    .max(50, { message: "Название слишком длинное" }),
+  price: z.number().positive({ message: "Цена должна быть болеше нуля" }),
+  stock: z
+    .number()
+    .int({ message: "Количество дожно быть целым числом" })
+    .nonnegative({ message: "Количество не может быть отрицательным" }),
+});
 
-  try {
-    const res = await fetch("https://dummyjson.com/products/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...payload,
-        category: "mens-shoes",
-      }),
-    });
+export const createSneakerDrop = actionClient
+  .inputSchema(CreateSneakerSchema)
+  .action(async ({ parsedInput }) => {
+    console.log(`Payload: ${parsedInput}`);
 
-    if (!res.ok) {
-      throw new Error("Не удалось создать товар");
+    try {
+      const res = await fetch("https://dummyjson.com/products/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...parsedInput,
+          category: "mens-shoes",
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Не удалось создать товар");
+      }
+
+      const data = await res.json();
+
+      return { success: true, data };
+    } catch (error: any) {
+      throw new Error(error.message || "Не удалось создать товар");
     }
-
-    const data = await res.json();
-
-    return { success: true, data };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Internal server error" };
-  }
-}
+  });
