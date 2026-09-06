@@ -1,47 +1,100 @@
 "use client";
 
 import { createSneakerDrop } from "@/actions/sneaker";
-import { useAction } from "next-safe-action/hooks";
+import { useActionState } from "react";
+
+type FormState = {
+  success: boolean;
+  productId: number | null;
+  error: string | null;
+  validationErrors: {
+    title?: string[];
+    price?: number[];
+    stock?: string[];
+  };
+};
+
+const initialState: FormState = {
+  success: false,
+  productId: null,
+  error: null,
+  validationErrors: {},
+};
 
 export default function NewDropPage() {
-  const { execute, isPending, result } = useAction(createSneakerDrop);
-  const mockSneaker = {
-    title: "Air Kordan 1 High Mock",
-    price: 180,
-    stock: 5,
-  };
+  const [state, formAction, isPending] = useActionState<FormState, FormData>(
+    async (prevState, formData) => {
+      const rawTitle = formData.get("title") as string;
+      const rawPrice = Number(formData.get("price"));
+      const rawStock = Number(formData.get("stock"));
 
-  const handleTriggerDrop = async () => {
-    execute(mockSneaker);
-  };
+      const result = await createSneakerDrop({
+        title: rawTitle,
+        price: rawPrice,
+        stock: rawStock,
+      });
+
+      // Если zod вернул ошибку валидации
+      if (result?.validationErrors) {
+        return {
+          success: false,
+          productId: null,
+          error: null,
+          validationErrors: {
+            title: result.validationErrors.title?._errors,
+            price: result.validationErrors.title?._errors,
+            stock: result.validationErrors.title?._errors,
+          },
+        };
+      }
+
+      // Если ошибка сервера.
+      if (result?.serverError) {
+        return {
+          success: false,
+          productId: null,
+          error: result.serverError,
+          validationErrors: {},
+        };
+      }
+
+      // Если успех
+      if (result?.data?.success) {
+        return {
+          success: true,
+          productId: result.data.productId,
+          error: null,
+          validationsErrors: {},
+        };
+      }
+
+      return prevState;
+    },
+    initialState,
+  );
 
   return (
     <main className="p-5">
       <h2>Тестирование Server Action</h2>
-      <p>
-        Товар для отправки: {mockSneaker.title} (${mockSneaker.price})
-      </p>
-
-      <button onClick={handleTriggerDrop} disabled={isPending}>
-        {isPending ? "Отправка на сервер..." : "Отправить данные на сервер"}
-      </button>
-      <div className="mt-5">
-        {result.serverError && (
-          <p className="text-red-500">Ошибка бэкэнда: {result.serverError}</p>
-        )}
-
-        {result.validationErrors && (
-          <p className="text-orange-500">
-            Ошибка валидации контракта: Проверьте введенные типы данных
-          </p>
-        )}
-
-        {result.data?.success && (
-          <p className="text-emerald-500">
-            Успешно создано! ID в базе: {result.data.product.id}
-          </p>
-        )}
-      </div>
+      <form action={formAction} className="flex flex-col gap-4">
+        <div>
+          <label htmlFor="title" className="block mb-1 text-sm font-medium">
+            Название модели
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            disabled={isPending}
+            className="w-full border rounded px-3 py-2 disabled:opacity-50"
+          />
+          {state.validationErrors.title && (
+            <span className="text-red-500 text-xs">
+              {state.validationErrors.title.join(", ")}
+            </span>
+          )}
+        </div>
+      </form>
     </main>
   );
 }

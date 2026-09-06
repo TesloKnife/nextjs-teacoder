@@ -38,7 +38,7 @@ export const createSneakerDrop = actionClient
 
       const data = await res.json();
 
-      return { success: true, product: data };
+      return { success: true, productId: data.id };
     } catch (error: any) {
       throw new Error(error.message || "Не удалось создать товар");
     }
