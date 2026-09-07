@@ -1,6 +1,7 @@
 "use client";
 
 import { createSneakerDrop } from "@/actions/sneaker";
+import { SubmitButton } from "@/components/submit-button";
 import { useActionState } from "react";
 
 type FormState = {
@@ -9,7 +10,7 @@ type FormState = {
   error: string | null;
   validationErrors: {
     title?: string[];
-    price?: number[];
+    price?: string[];
     stock?: string[];
   };
 };
@@ -131,13 +132,7 @@ export default function NewDropPage() {
           )}
         </div>
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isPending ? "Запись на сервере..." : "Запустить дроп"}
-        </button>
+        <SubmitButton />
       </form>
 
       {state.error && (
