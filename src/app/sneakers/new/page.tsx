@@ -42,8 +42,8 @@ export default function NewDropPage() {
           error: null,
           validationErrors: {
             title: result.validationErrors.title?._errors,
-            price: result.validationErrors.title?._errors,
-            stock: result.validationErrors.title?._errors,
+            price: result.validationErrors.price?._errors,
+            stock: result.validationErrors.stock?._errors,
           },
         };
       }
@@ -64,7 +64,7 @@ export default function NewDropPage() {
           success: true,
           productId: result.data.productId,
           error: null,
-          validationsErrors: {},
+          validationErrors: {},
         };
       }
 
@@ -94,7 +94,63 @@ export default function NewDropPage() {
             </span>
           )}
         </div>
+
+        <div>
+          <label htmlFor="price" className="block mb-1 text-sm font-medium">
+            Цена ($):
+          </label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            disabled={isPending}
+            className="w-full border rounded px-3 py-2 disabled:opacity-50"
+          />
+          {state.validationErrors.price && (
+            <span className="text-red-500 text-xs">
+              {state.validationErrors.price.join(", ")}
+            </span>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="title" className="block mb-1 text-sm font-medium">
+            Количество (Stock):
+          </label>
+          <input
+            type="number"
+            id="stock"
+            name="stock"
+            disabled={isPending}
+            className="w-full border rounded px-3 py-2 disabled:opacity-50"
+          />
+          {state.validationErrors.stock && (
+            <span className="text-red-500 text-xs">
+              {state.validationErrors.stock.join(", ")}
+            </span>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={isPending}
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isPending ? "Запись на сервере..." : "Запустить дроп"}
+        </button>
       </form>
+
+      {state.error && (
+        <div className="text-red-500 mt-4 p-3 border border-red-500 rounded">
+          {state.error}
+        </div>
+      )}
+
+      {state.success && (
+        <div className="text-green-500 mt-4 p-3 border border-green-500 roundend">
+          Дроп создан! ID товара: {state.productId}
+        </div>
+      )}
     </main>
   );
 }
