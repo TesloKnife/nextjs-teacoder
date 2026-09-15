@@ -1,7 +1,7 @@
 "use server";
 
 import { actionClient } from "@/lib/safe-action";
-import z from "zod";
+import z, { success } from "zod";
 
 const CreateSneakerSchema = z.object({
   title: z
@@ -42,4 +42,20 @@ export const createSneakerDrop = actionClient
     } catch (error: any) {
       throw new Error(error.message || "Не удалось создать товар");
     }
+  });
+
+const ToogleFavoriteSchema = z.object({
+  id: z.number(),
+});
+
+export const toggleFavorite = actionClient
+  .inputSchema(ToogleFavoriteSchema)
+  .action(async ({ parsedInput }) => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    if (parsedInput.id === 2) {
+      throw new Error("Не удалось обновить статус избранного для этой модели");
+    }
+
+    return { success: true, id: parsedInput.id };
   });
