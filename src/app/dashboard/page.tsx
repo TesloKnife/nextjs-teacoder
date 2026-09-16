@@ -1,18 +1,19 @@
-import { redirect } from "next/navigation";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 
-export default async function DashboardPage() {
-  //   const cookieStore = await cookies();
+interface DashboardPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-  //   const sessionToken = cookieStore.get("session_token")?.value;
+export default async function DashboardPage({
+  searchParams,
+}: DashboardPageProps) {
+  const params = await searchParams;
+  const currentPage = Number(params.page) || 1;
+  const currentSort = params.sort === "desc" ? "desc" : "asc";
 
-  //   if (!sessionToken) {
-  //     redirect("/login");
-  //   }
-
-  const headersStore = await headers();
-
-  const token = headersStore.get("host");
-
-  return <div>Your token: {token}</div>;
+  return (
+    <div>
+      Current Page: {currentPage} <br /> Current Sort: {currentSort}
+    </div>
+  );
 }
