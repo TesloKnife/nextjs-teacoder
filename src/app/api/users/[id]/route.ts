@@ -17,7 +17,7 @@ export async function GET(
     },
     {
       status: 200,
-      headers: { "X-Cutom-Header": "random" },
+      headers: { "X-Custom-Header": "random" },
     },
   );
 }
