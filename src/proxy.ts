@@ -24,11 +24,15 @@ export default function proxy(request: NextRequest) {
     });
   }
 
-  return NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
   });
+
+  response.headers.set("x-proxy-handled", "true");
+
+  return response;
 }
 
 export const config = {
