@@ -14,6 +14,16 @@ export default function proxy(request: NextRequest) {
     return NextResponse.redirect(targetUrl);
   }
 
+  if (url.pathname === "/store/legacy") {
+    const targetUrl = new URL("/store/modern", request.url);
+
+    return NextResponse.rewrite(targetUrl, {
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
   return NextResponse.next({
     request: {
       headers: requestHeaders,
