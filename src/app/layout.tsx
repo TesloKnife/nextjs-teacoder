@@ -24,12 +24,6 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const headersSrore = await headers();
-
-  const pathname = headersSrore.get("x-pathname");
-
-  console.log("Current pathname:", { pathname });
-
   return (
     <html
       lang="en"
