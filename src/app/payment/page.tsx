@@ -1,4 +1,10 @@
-"use client";
+// "use client";
+
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Payment",
+};
 
 export default function PaymentPage() {
   console.log("SUPABASE URL: ", process.env.NEXT_PUBLIC_SUPABASE_URL);
