@@ -71,6 +71,7 @@ export const metadata: Metadata = {
   verification: {
     yandex: "token",
   },
+  manifest: "/manifest.webmanifest",
 };
 
 interface RootLayoutProps {
